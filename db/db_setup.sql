@@ -1,3 +1,13 @@
+-- Type: session_status
+
+-- DROP TYPE public.session_status;
+
+CREATE TYPE public.session_status AS ENUM
+    ('open', 'won', 'lost');
+
+ALTER TYPE public.session_status
+    OWNER TO postgres;
+
 -- Table: public.player
 
 -- DROP TABLE public.player;
@@ -24,10 +34,11 @@ CREATE TABLE public.play_session
 (
     play_session_id integer NOT NULL,
     player_id integer NOT NULL,
-    session_funds numeric(8,2) NOT NULL DEFAULT 0,
+    bet_amount numeric(8,2) NOT NULL DEFAULT 0,
     bet_factor numeric(8,2) NOT NULL DEFAULT 1,
     created timestamp without time zone NOT NULL,
     last_updated timestamp without time zone NOT NULL DEFAULT now(),
+    session_status session_status NOT NULL DEFAULT 'open'::session_status,
     CONSTRAINT play_session_pkey PRIMARY KEY (play_session_id)
 )
 

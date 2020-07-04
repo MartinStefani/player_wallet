@@ -23,13 +23,12 @@ and for simplicity there is a column named *wallet_funds*.
 The *play_session* table contains all the sessions/bets.
 
 Non-trivial fields:
-- *session_funds* which is actually the "bet_amount" (TODO: rename the column to
-*bet_amount*).
-- *bet_factor* the factor/multiplyer of the bet. A factor of 2 means if the
+- *bet_amount* the amount transferred from the wallet and used for the bet.
+- *bet_factor* the factor/multiplayer of the bet. A factor of 2 means if the
 player wins, will get back double the bet_amount.
 - *bet_outcome* is an enum, "open" | "won" | "lost". Updates to the record are
 allowed only if "open". If "won" a transaction with the bet is added and the
-amount is transferred back to the *wallet_funds* (bef_factor * bet_amount).
+amount is transferred back to the *wallet_funds* (bet_factor * bet_amount).
 If "lost" no second transaction is made.
 
 
