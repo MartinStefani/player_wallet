@@ -1,3 +1,21 @@
+CREATE DATABASE player_wallet
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'en_US.UTF-8'
+    LC_CTYPE = 'en_US.UTF-8'
+    CONNECTION LIMIT = -1;
+
+CREATE SCHEMA public
+    AUTHORIZATION postgres;
+
+COMMENT ON SCHEMA public
+    IS 'standard public schema';
+
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+GRANT ALL ON SCHEMA public TO postgres;
+
 -- Type: session_status
 
 -- DROP TYPE public.session_status;
@@ -92,3 +110,10 @@ CREATE INDEX fki_fk_player_id
     ON public.wallet_transaction USING btree
     (player_id ASC NULLS LAST)
     TABLESPACE pg_default;
+
+
+-- Preexisting data
+INSERT INTO player (player_name, wallet_funds)
+     VALUES ('Aldo Baio', 0);
+
+
