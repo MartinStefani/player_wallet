@@ -155,7 +155,7 @@ export const register = (app: express.Application) => {
                 playerId: Joi.number().integer().min(1).required()
             });
 
-            const {error, value} = schema.validate(req.body);
+            const {error, value} = schema.validate(req.params);
 
             if (error) {
                 return res.status(400).json({ code: 'ERROR', msg: error.details[0].message });
