@@ -2,12 +2,21 @@ import dotenv from 'dotenv'
 import express from 'express';
 import path from 'path';
 import * as routes from './routes';
+import morgan from 'morgan';
+import fs from 'fs';
 
 // init config
 dotenv.config();
 
 const port = process.env.SERVER_PORT;
 const app = express();
+
+// Logging
+const logger = morgan('combined');
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+
+app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(express.json());
 
