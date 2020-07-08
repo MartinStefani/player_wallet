@@ -1,5 +1,6 @@
 import * as express from 'express';
 import pgPromise from 'pg-promise';
+import Joi from '@hapi/joi';
 
 export const register = (app: express.Application) => {
     const port = parseInt(process.env.PGPORT || '5432', 10);
@@ -15,6 +16,17 @@ export const register = (app: express.Application) => {
 
     app.put('/api/wallet', async (req: any, res) => {
         try {
+            const schema = Joi.object().keys({
+                playerId: Joi.number().integer().min(1).required(),
+                funds: Joi.number().min(1).max(100).required()
+            });
+
+            const {error, value} = schema.validate(req.body);
+
+            if (error) {
+                return res.status(400).json({ code: 'ERROR', msg: error.details[0].message });
+            }
+
             const playerId = parseInt(req.body.playerId, 10);
             const funds = parseFloat(req.body.funds);
 
@@ -24,7 +36,8 @@ export const register = (app: express.Application) => {
                  WHERE player_id = $[playerId]
              RETURNING player_id
                 ;`, { playerId, funds });
-            return res.json({ pid });
+
+            return res.json({ code: 'OK' });
         } catch (err) {
             res.json({ error: err.message || err });
         }
@@ -122,7 +135,7 @@ export const register = (app: express.Application) => {
                   FROM play_session AS ps
                  WHERE ps.player_id = $[playerId];`, { playerId });
 
-            return res.json({ player: playerHistory, wallet_transactions: walletTransactionHistory, play_sessions: playSessionHistory});
+            return res.json({ player: playerHistory, wallet_transactions: walletTransactionHistory, play_sessions: playSessionHistory });
         } catch (err) {
             res.json({ code: err.message || err });
         }
