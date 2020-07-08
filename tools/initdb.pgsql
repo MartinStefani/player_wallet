@@ -1,5 +1,7 @@
+-- IMPORTANT NOTICE: The database must be already created and set in the .env file
+-- -----------------------------------------------------------------------
 -- DROP DATABASE IF EXISTS player_wallet_3;
-
+/*
 CREATE DATABASE player_wallet_3
     WITH
     OWNER = postgres
@@ -7,8 +9,9 @@ CREATE DATABASE player_wallet_3
     LC_COLLATE = 'en_US.UTF-8'
     LC_CTYPE = 'en_US.UTF-8'
     CONNECTION LIMIT = -1;
+*/
 
--- -----------------------------------------------------------------------
+-- ===========================================================================
 -- player
 CREATE TABLE player
 (
@@ -113,7 +116,8 @@ BEGIN
 		-- Transaction: begin //TODO
 		
 		UPDATE play_session
-		   SET session_status = closingStatus
+		   SET session_status = closingStatus,
+               last_updated = now()
 		 WHERE play_session_id = playSessionId;
 		 
 		INSERT INTO wallet_transaction(player_id, play_session_id, wallet_funds_before, transaction_amount)
@@ -133,6 +137,57 @@ BEGIN
 		 WHERE play_session_id = playSessionId;
 		
         resultCode := 'BET_LOST';
+		-- No wallet_transactions
+	END IF;
+END;
+$BODY$;
+
+CREATE OR REPLACE PROCEDURE place_bet(
+	playsessionid integer,
+	betAmount Numeric(8,2),
+	INOUT resultcode character varying)
+LANGUAGE 'plpgsql'
+AS $BODY$
+	DECLARE 
+		currentSessionStatus VARCHAR(50);
+		betFactor NUMERIC(8,2);
+		walletFundsBefore NUMERIC(8,2);
+		playerId INT;
+BEGIN 
+	resultCode := 'UNDEFINED';
+
+	SELECT ps.session_status, p.wallet_funds, p.player_id
+	  INTO currentSessionStatus, walletFundsBefore, playerId
+	  FROM player AS p
+	 INNER JOIN play_session AS ps
+			 ON p.player_id = ps.player_id
+	 WHERE ps.play_session_id = playSessionId;
+
+	IF (currentSessionStatus <> 'open') THEN
+	    resultCode := 'BET_NOT_OPEN';
+		RETURN;
+	END IF;
+
+	IF (walletFundsBefore >= betAmount) THEN
+		-- Transaction: begin //TODO
+		
+		UPDATE play_session
+		   SET bet_amount = bet_amount + betAmount,
+		       last_updated = now()
+		 WHERE play_session_id = playSessionId;
+		 
+		INSERT INTO wallet_transaction(player_id, play_session_id, wallet_funds_before, transaction_amount)
+		     VALUES (playerId, playSessionId, walletFundsBefore, betAmount);
+			 
+	    UPDATE player
+		   SET wallet_funds = wallet_funds - betAmount
+		 WHERE player_id = playerId;
+		 
+		 -- Transaction: commit //TODO
+		 
+		resultCode := 'BET_PLACED';
+	ELSE
+        resultCode := CONCAT('ERROR_INSUFFICIENT_FUNDS (', walletFundsBefore, '; ', betAmount, ')');
 		-- No wallet_transactions
 	END IF;
 END;

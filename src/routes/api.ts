@@ -58,7 +58,7 @@ export const register = (app: express.Application) => {
             }
 
             const playerId = parseInt(req.body.playerId, 10);
-            const playSessionName = req.body.betAmount || '';
+            const playSessionName = req.body.playSessionName || '';
             const betFactor = parseFloat(req.body.betFactor);
 
             const queryResponse = await db.one(`
@@ -89,15 +89,10 @@ export const register = (app: express.Application) => {
             const playSessionId = parseInt(req.body.playSessionId, 10);
             const betAmount = parseFloat(req.body.betAmount);
 
-            const betId = await db.one(`
-                UPDATE play_session
-                   SET bet_amount = $[betAmount],
-                       last_updated = now()
-                 WHERE play_session_id = $[playSessionId]
-             RETURNING play_session_id
-            `, { playSessionId, betAmount });
+            const resultCode = 'UNDEFINED';
+            const procOutput = await db.proc('place_bet', { playSessionId, betAmount, resultCode });
 
-            return res.json({ code: 'OK' });
+            return res.json({ code: procOutput.resultcode });
         } catch (err) {
             res.status(500).json({ code: 'ERROR', msg: err.message || err });
         }
