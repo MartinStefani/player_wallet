@@ -8,10 +8,4 @@ export const register = (app: express.Application) => {
     });
 
     api.register(app);
-    /*
-    // API endpoints
-    app.get('/api/players', (req: any, res) => {
-       res.render('index') ;
-    });
-    */
 };
