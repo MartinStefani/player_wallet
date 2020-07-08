@@ -116,6 +116,62 @@ Run the tests in Postman in the following order (check the port used first, if d
 7. *Bet / Player 1: session 1 - Win* - sets the bet as won
 8. *History / Player 1* - shows Player_1's data with the transactions and sessions.
 
+```json
+{
+    "player": [
+        {
+            "player_id": 1,
+            "player_name": "Aldo",
+            "wallet_funds": "8.72",
+            "created": "2020-07-08T16:29:42.945Z"
+        }
+    ],
+    "wallet_transactions": [
+        {
+            "wallet_transaction_id": 1,
+            "play_session_id": 1,
+            "wallet_funds_before": "12.34",
+            "transaction_amount": "2.75",
+            "created": "2020-07-08T16:42:44.359Z"
+        },
+        {
+            "wallet_transaction_id": 2,
+            "play_session_id": 2,
+            "wallet_funds_before": "9.59",
+            "transaction_amount": "5.00",
+            "created": "2020-07-08T16:42:49.527Z"
+        },
+        {
+            "wallet_transaction_id": 3,
+            "play_session_id": 1,
+            "wallet_funds_before": "4.59",
+            "transaction_amount": "4.13",
+            "created": "2020-07-08T16:42:58.563Z"
+        }
+    ],
+    "play_sessions": [
+        {
+            "play_session_id": 2,
+            "play_session_name": "Beta",
+            "session_status": "open",
+            "bet_amount": "5.00",
+            "bet_factor": "2.10",
+            "created": "2020-07-08T16:42:24.446Z",
+            "last_updated": "2020-07-08T16:42:49.527Z"
+        },
+        {
+            "play_session_id": 1,
+            "play_session_name": "Alpha",
+            "session_status": "won",
+            "bet_amount": "2.75",
+            "bet_factor": "1.50",
+            "created": "2020-07-08T16:42:20.143Z",
+            "last_updated": "2020-07-08T16:42:58.563Z"
+        }
+    ]
+}
+```
+
 
 ## Known issues
 
