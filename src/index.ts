@@ -14,7 +14,7 @@ const app = express();
 
 // Logging
 const logger = morgan('combined');
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+const accessLogStream = fs.createWriteStream(path.join(__dirname, '../log/access.log'), { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(express.json());
