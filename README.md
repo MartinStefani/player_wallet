@@ -19,6 +19,8 @@ Notes:
   branches and keept them.
 - PostgreSQL: there are two procedures in the project. PostgreSQL 12 was used (the current Stable version).
 - There is a more technical documentation in `./documentation/Technical_documentation.md`
+- Postman: in `.env` the server is set to run on port 4000, this may be adjusted in Postman's requests.
+
 
 ## Setup
 
@@ -35,9 +37,10 @@ CREATE DATABASE player_wallet
 
 2. Set the environment config file `.env` with the DB values an Node port.
 
-3. Update the modules: `$ node install`.
+3. Update the modules: `$ npm install`.
 
-4. Import the DB schema, procedure and data: `$ npm run initdb`.
+4. Import the DB schema by running the query from `./initdb.pgsql`.
+   (It was ment to be run by `$ npm run initdb`, but I don't know all the quirks of PostgreSQL yet.)
 
 5. Run the application: `$ npm run dev`
 
@@ -99,6 +102,19 @@ are no funds to transfer.
 
 To view all the player's data, the transactions and open *play sessions*, the `api/history` GET request is used which
 returns all the mentioned data.
+
+
+## Test case
+
+Run the tests in Postman in the following order (check the port used first, if different than 4000):
+1. *History / Player 1* - shows Player_1's data with the funds in the wallet set to 0.
+2. *Wallet / Player 1: funds 12.34* - sets the funds of the player to 12.34.
+3. *Play session / Player 1: session 1 - create* - creates a *play session*
+4. *Play session / Player 1: session 2 - create* - creates a second *play session*
+5. *Bet / Player 1: session 1 - Bet* - creates a bet in the session
+6. *Bet / Player 1: session 2 - Bet* - creates a bet in the second session
+7. *Bet / Player 1: session 1 - Win* - sets the bet as won
+8. *History / Player 1* - shows Player_1's data with the transactions and sessions.
 
 
 ## Known issues

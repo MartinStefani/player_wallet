@@ -1,16 +1,13 @@
 -- IMPORTANT NOTICE: The database must be already created and set in the .env file
 -- -----------------------------------------------------------------------
 -- DROP DATABASE IF EXISTS player_wallet_3;
-/*
-CREATE DATABASE player_wallet_3
-    WITH
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.UTF-8'
-    LC_CTYPE = 'en_US.UTF-8'
-    CONNECTION LIMIT = -1;
-*/
-
+-- CREATE DATABASE player_wallet_3
+--    WITH
+--    OWNER = postgres
+--    ENCODING = 'UTF8'
+--    LC_COLLATE = 'en_US.UTF-8'
+--    LC_CTYPE = 'en_US.UTF-8'
+--    CONNECTION LIMIT = -1;
 -- ===========================================================================
 -- player
 CREATE TABLE player
