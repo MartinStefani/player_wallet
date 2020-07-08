@@ -39,7 +39,7 @@ export const register = (app: express.Application) => {
 
             return res.json({ code: 'OK' });
         } catch (err) {
-            res.json({ code: 'ERROR', msg: err.message || err });
+            res.status(500).json({ code: 'ERROR', msg: err.message || err });
         }
     });
 
@@ -61,15 +61,15 @@ export const register = (app: express.Application) => {
             const playSessionName = req.body.betAmount || '';
             const betFactor = parseFloat(req.body.betFactor);
 
-            const playSessionId = await db.one(`
+            const queryResponse = await db.one(`
                 INSERT INTO play_session (player_id, play_session_name, bet_factor)
                      VALUES ($[playerId], $[playSessionName], $[betFactor])
                   RETURNING play_session_id;
             `, { playerId, playSessionName, betFactor });
 
-            return res.json({ playSessionId });
+            return res.json({ play_session_id: queryResponse.play_session_id });
         } catch (err) {
-            res.json({ code: 'ERROR', msg: err.message || err });
+            res.status(500).json({ code: 'ERROR', msg: err.message || err });
         }
     });
 
@@ -87,17 +87,19 @@ export const register = (app: express.Application) => {
             }
 
             const playSessionId = parseInt(req.body.playSessionId, 10);
-            const betAmount = parseFloat(req.body.amount);
+            const betAmount = parseFloat(req.body.betAmount);
 
             const betId = await db.one(`
                 UPDATE play_session
-                   SET bet_amount = $[betAmount]
+                   SET bet_amount = $[betAmount],
+                       last_updated = now()
                  WHERE play_session_id = $[playSessionId]
+             RETURNING play_session_id
             `, { playSessionId, betAmount });
 
-            return res.json({ playSessionId });
+            return res.json({ code: 'OK' });
         } catch (err) {
-            res.json({ code: 'ERROR', msg: err.message || err });
+            res.status(500).json({ code: 'ERROR', msg: err.message || err });
         }
     });
 
@@ -121,7 +123,7 @@ export const register = (app: express.Application) => {
 
             return res.json({ code: procOutput.resultcode });
         } catch (err) {
-            res.json({ code: 'ERROR', msg: err.message || err });
+            res.status(500).json({ code: 'ERROR', msg: err.message || err });
         }
     });
 
@@ -145,7 +147,7 @@ export const register = (app: express.Application) => {
 
             return res.json({ code: procOutput.resultcode });
         } catch (err) {
-            res.json({ code: 'ERROR', msg: err.message || err });
+            res.status(500).json({ code: 'ERROR', msg: err.message || err });
         }
     });
 
@@ -190,7 +192,7 @@ export const register = (app: express.Application) => {
 
             return res.json({ player: playerHistory, wallet_transactions: walletTransactionHistory, play_sessions: playSessionHistory });
         } catch (err) {
-            res.json({ code: 'ERROR', msg: err.message || err });
+            res.status(500).json({ code: 'ERROR', msg: err.message || err });
         }
     });
 }
