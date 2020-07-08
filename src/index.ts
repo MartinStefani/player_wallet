@@ -4,6 +4,7 @@ import path from 'path';
 import * as routes from './routes';
 import morgan from 'morgan';
 import fs from 'fs';
+import basicAuth from 'express-basic-auth';
 
 // init config
 dotenv.config();
@@ -17,6 +18,9 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(express.json());
+app.use(basicAuth( {
+    users: { 'backend': 'tellno1'}
+}));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
